@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../context/AuthContext";
 import { supabase } from "../supabase-client";
 
@@ -61,6 +61,8 @@ const fetchVotes = async (postId: number): Promise<Vote[]> => {
 export const LikeButton = ({ postId }: Props) => {
   const { user } = useAuth();
 
+  const queryClient = useQueryClient();
+
   const {
     data: votes,
     isLoading,
@@ -76,6 +78,10 @@ export const LikeButton = ({ postId }: Props) => {
       if (!user) throw new Error("You must be logged in to Vote!");
       return vote(voteValue, postId, user.id);
     },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["votes", postId] });
+    },
   });
 
   if (isLoading) {
@@ -84,13 +90,28 @@ export const LikeButton = ({ postId }: Props) => {
 
   if (error) return <div>Error: {error.message}</div>;
 
-  const likes = votes?.filter((v) => v.vote === 1).length;
-  const dislikes = votes?.filter((v) => v.vote === -1).length;
+  const likes = votes?.filter((v) => v.vote === 1).length || 0;
+  const dislikes = votes?.filter((v) => v.vote === -1).length || 0;
+  const userVote = votes?.find((v) => v.user_id === user?.id)?.vote;
 
   return (
-    <div>
-      <button onClick={() => mutate(1)}>👍 {likes}</button>
-      <button onClick={() => mutate(-1)}>👎 {dislikes}</button>
+    <div className="flex items-center space-x-4 my-4">
+      <button
+        onClick={() => mutate(1)}
+        className={`px-3 py-1 cursor-pointer rounded transition-colors duration-150 ${
+          userVote === 1 ? "bg-green-500 text-white" : "bg-gray-200 text-black"
+        }`}
+      >
+        👍 {likes}
+      </button>
+      <button
+        onClick={() => mutate(-1)}
+        className={`px-3 py-1 cursor-pointer rounded transition-colors duration-150 ${
+          userVote === -1 ? "bg-red-500 text-white" : "bg-gray-200 text-black"
+        }`}
+      >
+        👎 {dislikes}
+      </button>
     </div>
   );
 };
