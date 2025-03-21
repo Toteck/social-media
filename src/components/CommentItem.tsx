@@ -144,7 +144,7 @@ export const CommentItem = ({ comment, postId }: Props) => {
             )}
           </button>
           {!isCollapsed && (
-            <div>
+            <div className="space-y-2">
               {comment.children.map((child, key) => (
                 <CommentItem key={key} comment={child} postId={postId} />
               ))}
