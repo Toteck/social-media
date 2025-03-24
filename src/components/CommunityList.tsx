@@ -9,7 +9,7 @@ export interface Community {
   created_at: string;
 }
 
-const fetchCommunities = async (): Promise<Community[]> => {
+export const fetchCommunities = async (): Promise<Community[]> => {
   const { data, error } = await supabase
     .from("communities")
     .select("*")
@@ -27,11 +27,15 @@ const CommunityList = () => {
   });
 
   if (isLoading) {
-    return <div>Loading communities...</div>;
+    return <div className="text-center py-4">Loading communities...</div>;
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return (
+      <div className="text-center text-red-500 py-4">
+        Error: {error.message}
+      </div>
+    );
   }
 
   return (

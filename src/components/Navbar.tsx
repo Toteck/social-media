@@ -4,7 +4,9 @@ import { useAuth } from "../context/AuthContext";
 
 export const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { signInWithGitHub, signOut, user } = useAuth();
+  const { signInWithGoogle, signOut, user } = useAuth();
+
+  console.log(user?.user_metadata.avatar_url);
 
   const displayName = user?.user_metadata.user_name || user?.email;
   return (
@@ -47,9 +49,9 @@ export const Navbar = () => {
           <div className="hidden md:flex items-center">
             {user ? (
               <div className="flex items-center space-x-4">
-                {user.user_metadata?.avatar_url && (
+                {user.user_metadata?.picture && (
                   <img
-                    src={user.user_metadata.avatar_url}
+                    src={user.user_metadata.picture}
                     alt="User Avatar"
                     className="w-8 h-8 rounded-full object-cover"
                   />
@@ -64,10 +66,10 @@ export const Navbar = () => {
               </div>
             ) : (
               <button
-                onClick={signInWithGitHub}
+                onClick={signInWithGoogle}
                 className="bg-blue-700 hover:bg-blue-500 px-3 py-1 rounded"
               >
-                Sign in with GitHub
+                Entrar com o Google
               </button>
             )}
           </div>

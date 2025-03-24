@@ -4,7 +4,7 @@ import { supabase } from "../supabase-client";
 
 interface AuthContextType {
   user: User | null;
-  signInWithGitHub: () => void;
+  signInWithGoogle: () => void;
   signOut: () => void;
 }
 
@@ -12,6 +12,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+
+  console.log({ user });
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -27,8 +29,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, []);
 
-  const signInWithGitHub = () => {
-    supabase.auth.signInWithOAuth({ provider: "github" });
+  const signInWithGoogle = () => {
+    supabase.auth.signInWithOAuth({ provider: "google" });
   };
 
   const signOut = () => {
@@ -36,7 +38,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, signInWithGitHub, signOut }}>
+    <AuthContext.Provider value={{ user, signInWithGoogle, signOut }}>
       {" "}
       {children}{" "}
     </AuthContext.Provider>
