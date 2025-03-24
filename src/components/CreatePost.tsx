@@ -11,22 +11,54 @@ interface PostInput {
   community_id?: number | null;
 }
 
-const createPost = async (post: PostInput, imageFile: File) => {
-  const filePath = `${post.title}-${Date.now()}-${imageFile.name}`;
+const sanitizeFileName = (fileName: string) => {
+  return fileName
+    .normalize("NFD") // Remove acentos
+    .replace(/[\u0300-\u036f]/g, "") // Remove diacríticos
+    .replace(/\s+/g, "_") // Substitui espaços por "_"
+    .replace(/[^a-zA-Z0-9_\-.]/g, ""); // Remove caracteres especiais exceto "-", "_" e "."
+};
 
-  const { error: uploadError } = await supabase.storage
+const createPost = async (
+  post: PostInput,
+  imageFile: File,
+  projectFile: File
+) => {
+  // Gerar nomes únicos para os arquivos
+  const imageFileName = `${post.title}-${Date.now()}-${imageFile.name}`;
+  const sanitizedProjectName = sanitizeFileName(
+    `${post.title}-${Date.now()}-${projectFile.name}`
+  );
+
+  // Fazer upload da imagem
+  const { error: uploadImageError } = await supabase.storage
     .from("post-images")
-    .upload(filePath, imageFile);
+    .upload(imageFileName, imageFile);
 
-  if (uploadError) throw new Error(uploadError.message);
+  if (uploadImageError) throw new Error(uploadImageError.message);
 
-  const { data: publicURLData } = supabase.storage
+  // Fazer upload do projeto
+  const { error: uploadPaperError } = await supabase.storage
+    .from("projects")
+    .upload(sanitizedProjectName, projectFile);
+
+  if (uploadPaperError) throw new Error(uploadPaperError.message);
+
+  // Obter URLs públicas
+  const { data: publicImageURLData } = supabase.storage
     .from("post-images")
-    .getPublicUrl(filePath);
+    .getPublicUrl(imageFileName);
 
-  const { data, error } = await supabase
-    .from("posts")
-    .insert({ ...post, image_url: publicURLData.publicUrl });
+  const { data: publicProjectURLData } = supabase.storage
+    .from("projects")
+    .getPublicUrl(sanitizedProjectName);
+
+  // Inserir post no banco de dados
+  const { data, error } = await supabase.from("posts").insert({
+    ...post,
+    image_url: publicImageURLData.publicUrl,
+    project_url: publicProjectURLData.publicUrl, // Corrigido aqui também
+  });
 
   if (error) throw new Error(error.message);
 
@@ -37,6 +69,7 @@ const CreatePost = () => {
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedProject, setSelectedProject] = useState<File | null>(null);
   const [communityId, setCommunityId] = useState<number | null>(null);
 
   const { user } = useAuth();
@@ -47,14 +80,19 @@ const CreatePost = () => {
   });
 
   const { mutate, isPending, isError } = useMutation({
-    mutationFn: (data: { post: PostInput; imageFile: File }) => {
-      return createPost(data.post, data.imageFile);
+    mutationFn: (data: {
+      post: PostInput;
+      imageFile: File;
+      projectFile: File;
+    }) => {
+      return createPost(data.post, data.imageFile, data.projectFile);
     },
   });
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     if (!selectedFile) return;
+    if (!selectedProject) return;
     mutate({
       post: {
         title,
@@ -63,12 +101,19 @@ const CreatePost = () => {
         community_id: communityId,
       },
       imageFile: selectedFile,
+      projectFile: selectedProject,
     });
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setSelectedFile(e.target.files[0]);
+    }
+  };
+
+  const handlePaperChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedProject(e.target.files[0]);
     }
   };
 
@@ -126,6 +171,19 @@ const CreatePost = () => {
           id="image"
           required
           onChange={handleFileChange}
+          className="w-fit bg-blue-700 hover:bg-blue-500 cursor-pointer py-2 px-4 rounded text-gray-200"
+        />
+      </div>
+      <div>
+        <label htmlFor="file" className="block mb-2 font-medium">
+          Carregar TCC/Trabalho Científico
+        </label>
+        <input
+          type="file"
+          accept=".pdf, .doc, .docx"
+          id="file"
+          required
+          onChange={handlePaperChange}
           className="w-fit bg-blue-700 hover:bg-blue-500 cursor-pointer py-2 px-4 rounded text-gray-200"
         />
       </div>
