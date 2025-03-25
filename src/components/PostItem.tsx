@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import { Post } from "./PostList";
-import { Heart, MessageCircle } from "lucide-react";
+import { Heart, MessageCircle, Share2 } from "lucide-react";
 
 interface Props {
   post: Post;
@@ -15,36 +15,40 @@ export const PostItem = ({ post }: Props) => {
           {/* Header: Avatar and Title */}
           <div className="flex items-center space-x-2">
             {post.avatar_url ? (
-              <img
-                src={post.avatar_url}
-                alt="User avataltw1r"
-                className="w-[35px] h-[35px] rounded-full object-cover"
-              />
-            ) : (
-              <div className="w-[35px] h-[35px] rounded-full bg-gradient-to-tl from-[#8A2BE2] to-[#491F70]" />
-            )}
-            <div className="flex flex-col flex-1">
-              <div className="text-[20px] leading-[22px] font-semibold mt-2">
-                {post.title}
+              <div className="flex items-center">
+                <img
+                  src={post.avatar_url}
+                  alt="User avataltw1r"
+                  className="w-[35px] h-[35px] rounded-full object-cover"
+                />
+                <span className="ml-2">Mateus Weslley</span>
               </div>
+            ) : (
+              <div className="w-[35px] h-[35px] rounded-full bg-gradient-to-tl from-[#8A2BE2] to-[#ca94fd]" />
+            )}
+          </div>
+          <div className="flex flex-col flex-1">
+            <div className="text-[20px] leading-[22px] font-semibold mt-2 text-justify">
+              {post.title}
             </div>
           </div>
 
-          {/* Image Banner */}
           <div className="mt-2 flex-1">
-            <img
-              src={post.image_url}
-              alt={post.title}
-              className="w-full rounded-[20px] object-cover max-h-[150px] mx-auto"
-            />
+            <p className="line-clamp-3 overflow-hidden text-ellipsis text-justify">
+              {post.content}
+            </p>
           </div>
-          <div className="flex justify-around items-center">
+
+          <div className="flex justify-start items-center">
             <span className="cursor-pointer h-10 w-[50px] px-1 flex items-center justify-center font-extrabold rounded-lg">
               <Heart /> <span className="ml-2">{post.like_count ?? 0}</span>
             </span>
             <span className="cursor-pointer h-10 w-[50px] px-1 flex items-center justify-center font-extrabold rounded-lg">
               <MessageCircle />{" "}
               <span className="ml-2">{post.comment_count ?? 0}</span>
+            </span>
+            <span className="cursor-pointer h-10 w-[50px] px-1 flex items-center justify-center font-extrabold rounded-lg">
+              <Share2 />
             </span>
           </div>
         </div>

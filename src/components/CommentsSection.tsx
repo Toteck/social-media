@@ -93,7 +93,6 @@ const CommentsSection = ({ postId }: Props) => {
     setNewCommentText("");
   };
 
-  /* Map of Comments - Organize Replies - Return Tree  */
   const buildCommentTree = (
     flatComments: Comment[]
   ): (Comment & { children?: Comment[] })[] => {
@@ -153,7 +152,7 @@ const CommentsSection = ({ postId }: Props) => {
         </form>
       ) : (
         <p className="mb-4 text-gray-600">
-          You must be logged in to post a comment.
+          Você deve estar entrar na sua conta para comentar.
         </p>
       )}
       {/* Comments Display Section */}

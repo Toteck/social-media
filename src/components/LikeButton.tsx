@@ -85,7 +85,7 @@ export const LikeButton = ({ postId }: Props) => {
   });
 
   if (isLoading) {
-    return <div> Loading votes...</div>;
+    return <div> Carregando votos...</div>;
   }
 
   if (error) return <div>Error: {error.message}</div>;

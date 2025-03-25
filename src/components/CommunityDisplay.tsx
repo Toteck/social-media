@@ -34,16 +34,26 @@ export const CommunityDisplay = ({ communityId }: Props) => {
 
   if (isLoading)
     return <div className="text-center py-4">Loading communities...</div>;
+
   if (error)
     return (
       <div className="text-center text-red-500 py-4">
         Error: {error.message}
       </div>
     );
+
+  console.log("CommunityDisplay => ", { data });
+  if (data?.length === 0)
+    return (
+      <div className="text-center py-4">
+        Nenhum trabalho ainda divulgado para esse curso 😥...
+      </div>
+    );
+
   return (
     <div>
       <h2 className="text-6xl font-bold mb-6 text-center bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-        {data && data[0].communities.name} Community Posts
+        Publicações de Sistemas para Internet
       </h2>
 
       {data && data.length > 0 ? (

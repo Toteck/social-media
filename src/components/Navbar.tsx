@@ -6,9 +6,9 @@ export const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { signInWithGoogle, signOut, user } = useAuth();
 
-  console.log(user?.user_metadata.avatar_url);
-
   const displayName = user?.user_metadata.user_name || user?.email;
+
+  if (!user) return <h2>Carregando...</h2>;
   return (
     <nav className="fixed top-0 w-full z-40 bg-[rgba(10,10,10,0.8)] backdrop-blur-lg border-b border-white/10 shadow-lg">
       <div className="max-w-5xl mx-auto px-4">
@@ -23,25 +23,19 @@ export const Navbar = () => {
               to="/"
               className="text-gray-300 hover:text-white transition-colors"
             >
-              Home
+              Início
             </Link>
             <Link
               to="/create"
               className="text-gray-300 hover:text-white transition-colors"
             >
-              Create Post
+              Publicar TCC/Artigo
             </Link>
             <Link
               to="/communities"
               className="text-gray-300 hover:text-white transition-colors"
             >
-              Communities
-            </Link>
-            <Link
-              to="/community/create"
-              className="text-gray-300 hover:text-white transition-colors"
-            >
-              Create Community
+              Artigos por curso
             </Link>
           </div>
 

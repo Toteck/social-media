@@ -7,7 +7,6 @@ export interface Post {
   title: string;
   content: string;
   created_at: string;
-  image_url: string;
   avatar_url?: string;
   like_count?: number;
   comment_count?: number;
@@ -33,8 +32,6 @@ export const PostList = () => {
   if (error) {
     return <div>Error: {error.message}</div>;
   }
-
-  console.log(data);
 
   return (
     <div className="flex flex-wrap gap-6 justify-center">

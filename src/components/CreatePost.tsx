@@ -3,12 +3,15 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { supabase } from "../supabase-client";
 import { useAuth } from "../context/AuthContext";
 import { Community, fetchCommunities } from "./CommunityList";
+import { useNavigate } from "react-router";
 
 interface PostInput {
   title: string;
   content: string;
   avatar_url: string | null;
   community_id?: number | null;
+  user_id: string;
+  author: string;
 }
 
 const sanitizeFileName = (fileName: string) => {
@@ -19,23 +22,12 @@ const sanitizeFileName = (fileName: string) => {
     .replace(/[^a-zA-Z0-9_\-.]/g, ""); // Remove caracteres especiais exceto "-", "_" e "."
 };
 
-const createPost = async (
-  post: PostInput,
-  imageFile: File,
-  projectFile: File
-) => {
+const createPost = async (post: PostInput, projectFile: File) => {
   // Gerar nomes únicos para os arquivos
-  const imageFileName = `${post.title}-${Date.now()}-${imageFile.name}`;
+
   const sanitizedProjectName = sanitizeFileName(
     `${post.title}-${Date.now()}-${projectFile.name}`
   );
-
-  // Fazer upload da imagem
-  const { error: uploadImageError } = await supabase.storage
-    .from("post-images")
-    .upload(imageFileName, imageFile);
-
-  if (uploadImageError) throw new Error(uploadImageError.message);
 
   // Fazer upload do projeto
   const { error: uploadPaperError } = await supabase.storage
@@ -45,9 +37,6 @@ const createPost = async (
   if (uploadPaperError) throw new Error(uploadPaperError.message);
 
   // Obter URLs públicas
-  const { data: publicImageURLData } = supabase.storage
-    .from("post-images")
-    .getPublicUrl(imageFileName);
 
   const { data: publicProjectURLData } = supabase.storage
     .from("projects")
@@ -56,7 +45,6 @@ const createPost = async (
   // Inserir post no banco de dados
   const { data, error } = await supabase.from("posts").insert({
     ...post,
-    image_url: publicImageURLData.publicUrl,
     project_url: publicProjectURLData.publicUrl, // Corrigido aqui também
   });
 
@@ -68,11 +56,14 @@ const createPost = async (
 const CreatePost = () => {
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedProject, setSelectedProject] = useState<File | null>(null);
   const [communityId, setCommunityId] = useState<number | null>(null);
 
+  const navigate = useNavigate();
+
   const { user } = useAuth();
+
+  console.log("CreatePost => ", { user });
 
   const { data: communities } = useQuery<Community[], Error>({
     queryKey: ["communities"],
@@ -80,18 +71,17 @@ const CreatePost = () => {
   });
 
   const { mutate, isPending, isError } = useMutation({
-    mutationFn: (data: {
-      post: PostInput;
-      imageFile: File;
-      projectFile: File;
-    }) => {
-      return createPost(data.post, data.imageFile, data.projectFile);
+    mutationFn: (data: { post: PostInput; projectFile: File }) => {
+      return createPost(data.post, data.projectFile);
+    },
+    onSuccess: () => {
+      navigate("/");
     },
   });
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    if (!selectedFile) return;
+
     if (!selectedProject) return;
     mutate({
       post: {
@@ -99,16 +89,12 @@ const CreatePost = () => {
         content,
         avatar_url: user?.user_metadata.avatar_url || null,
         community_id: communityId,
+        user_id: user?.id || "",
+        author: user?.user_metadata.full_name,
       },
-      imageFile: selectedFile,
+
       projectFile: selectedProject,
     });
-  };
-
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setSelectedFile(e.target.files[0]);
-    }
   };
 
   const handlePaperChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -126,7 +112,7 @@ const CreatePost = () => {
     <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-4">
       <div>
         <label htmlFor="title" className="block mb-2 font-medium">
-          Title
+          Título
         </label>
         <input
           type="text"
@@ -138,7 +124,7 @@ const CreatePost = () => {
       </div>
       <div>
         <label htmlFor="content" className="block mb-2 font-medium">
-          Content
+          Resumo
         </label>
         <textarea
           id="content"
@@ -150,7 +136,7 @@ const CreatePost = () => {
       </div>
 
       <div>
-        <label>Select Community</label>
+        <label>Selecione o curso</label>
         <select id="community" onChange={handleCommunityChange}>
           <option value=""> -- Choose a Community --</option>
           {communities?.map((community, key) => (
@@ -161,19 +147,6 @@ const CreatePost = () => {
         </select>
       </div>
 
-      <div>
-        <label htmlFor="image" className="block mb-2 font-medium">
-          Upload Image
-        </label>
-        <input
-          type="file"
-          accept="image/*"
-          id="image"
-          required
-          onChange={handleFileChange}
-          className="w-fit bg-blue-700 hover:bg-blue-500 cursor-pointer py-2 px-4 rounded text-gray-200"
-        />
-      </div>
       <div>
         <label htmlFor="file" className="block mb-2 font-medium">
           Carregar TCC/Trabalho Científico
@@ -191,8 +164,9 @@ const CreatePost = () => {
       <button
         type="submit"
         className="bg-purple-700 hover:bg-purple-500 text-white px-4 py-2 rounded cursor-pointer"
+        disabled={isPending}
       >
-        {isPending ? "Creating..." : "Create Post"}
+        {isPending ? "Publicando..." : "Publicar"}
       </button>
 
       {isError && <p className="text-red-500">Error creating post.</p>}
