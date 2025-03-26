@@ -83,7 +83,7 @@ export const CommentItem = ({ comment, postId }: Props) => {
           onClick={() => setShowReply((prev) => !prev)}
           className="text-blue-500 text-sm mt-1"
         >
-          {showReply ? "Cancel" : "Reply"}
+          {showReply ? "Cancelar" : "Responder"}
         </button>
       </div>
       {showReply && user && (
@@ -99,7 +99,7 @@ export const CommentItem = ({ comment, postId }: Props) => {
             type="submit"
             className="mt-1 bg-blue-500 text-white px-3 py-1 rounded"
           >
-            {isPending ? "Posting..." : "Post Reply"}
+            {isPending ? "Publicando..." : "Publicar resposta"}
           </button>
           {isError && <p className="text-red-500">Error posting reply.</p>}
         </form>
