@@ -11,20 +11,27 @@ export interface Post {
   like_count?: number;
   comment_count?: number;
   project_url: string;
+  author: string;
 }
 
-const fetchPosts = async (): Promise<Post[]> => {
-  const { data, error } = await supabase.rpc("get_posts_with_counts");
+const fetchPosts = async (searchTerm?: string): Promise<Post[]> => {
+  const { data, error } = await supabase.rpc("get_posts_with_counts", {
+    search_term: searchTerm || null,
+  });
 
   if (error) throw new Error(error.message);
 
   return data as Post[];
 };
 
-export const PostList = () => {
+interface PostListProps {
+  searchTerm?: string;
+}
+
+export const PostList = ({ searchTerm }: PostListProps) => {
   const { data, error, isLoading } = useQuery<Post[], Error>({
-    queryKey: ["posts"],
-    queryFn: fetchPosts,
+    queryKey: ["posts", searchTerm],
+    queryFn: () => fetchPosts(searchTerm),
   });
 
   if (isLoading) return <div>Loading posts...</div>;
@@ -33,9 +40,24 @@ export const PostList = () => {
     return <div>Error: {error.message}</div>;
   }
 
+  if (!data || data.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-xl text-gray-400">
+          {searchTerm
+            ? `Nenhum projeto encontrado para "${searchTerm}" 😢`
+            : "Nenhum projeto encontrado 😢"}
+        </p>
+        <p className="text-gray-500 mt-2">
+          Tente ajustar sua busca ou criar um novo projeto
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-wrap gap-6 justify-center">
-      {data?.map((post, key) => (
+      {data.map((post, key) => (
         <PostItem post={post} key={key} />
       ))}
     </div>

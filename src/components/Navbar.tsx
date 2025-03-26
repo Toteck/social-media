@@ -9,11 +9,21 @@ export const Navbar = () => {
   const displayName = user?.user_metadata.user_name || user?.email;
 
   if (!user) return <h2>Carregando...</h2>;
+
   return (
     <nav className="fixed top-0 w-full z-40 bg-[rgba(10,10,10,0.8)] backdrop-blur-lg border-b border-white/10 shadow-lg">
       <div className="max-w-5xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
-          <Link to="/" className="font-mono text-xl font-bold text-white">
+          <Link
+            to="/"
+            onClick={() => {
+              // Limpa o estado de busca se estiver na mesma rota
+              if (window.location.pathname === "/") {
+                window.location.reload();
+              }
+            }}
+            className="font-mono text-xl font-bold text-white"
+          >
             forum<span className="text-purple-500">.app</span>
           </Link>
 
@@ -21,6 +31,12 @@ export const Navbar = () => {
           <div className="hidden md:flex items-center space-x-8">
             <Link
               to="/"
+              onClick={() => {
+                // Limpa o estado de busca se estiver na mesma rota
+                if (window.location.pathname === "/") {
+                  window.location.reload();
+                }
+              }}
               className="text-gray-300 hover:text-white transition-colors"
             >
               Início

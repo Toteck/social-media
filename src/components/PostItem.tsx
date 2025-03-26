@@ -1,12 +1,14 @@
 import { Link } from "react-router";
 import { Post } from "./PostList";
-import { Heart, MessageCircle, Share2 } from "lucide-react";
+import { Heart, MessageCircle } from "lucide-react";
 
 interface Props {
   post: Post;
 }
 
 export const PostItem = ({ post }: Props) => {
+  if (!post.avatar_url) return <h2>Carregando...</h2>;
+
   return (
     <div className="relative group">
       <div className="absolute -inset-1 rounded-[20px] bg-gradient-to-r from-pink-600 to-purple-600 blur-sm opacity-0 group-hover:opacity-50 transition duration-300 pointer-events-none"></div>
@@ -21,7 +23,7 @@ export const PostItem = ({ post }: Props) => {
                   alt="User avataltw1r"
                   className="w-[35px] h-[35px] rounded-full object-cover"
                 />
-                <span className="ml-2">Mateus Weslley</span>
+                <span className="ml-2">{post.author}</span>
               </div>
             ) : (
               <div className="w-[35px] h-[35px] rounded-full bg-gradient-to-tl from-[#8A2BE2] to-[#ca94fd]" />
@@ -46,9 +48,6 @@ export const PostItem = ({ post }: Props) => {
             <span className="cursor-pointer h-10 w-[50px] px-1 flex items-center justify-center font-extrabold rounded-lg">
               <MessageCircle />{" "}
               <span className="ml-2">{post.comment_count ?? 0}</span>
-            </span>
-            <span className="cursor-pointer h-10 w-[50px] px-1 flex items-center justify-center font-extrabold rounded-lg">
-              <Share2 />
             </span>
           </div>
         </div>
