@@ -63,8 +63,6 @@ const CreatePost = () => {
 
   const { user } = useAuth();
 
-  console.log("CreatePost => ", { user });
-
   const { data: communities } = useQuery<Community[], Error>({
     queryKey: ["communities"],
     queryFn: fetchCommunities,
@@ -119,7 +117,7 @@ const CreatePost = () => {
           id="title"
           required
           onChange={(event) => setTitle(event.target.value)}
-          className="w-full border border-white/10 bg-transparent p-2 rounded"
+          className="w-full border border-gray-500 bg-transparent p-2 rounded"
         />
       </div>
       <div>
@@ -131,14 +129,14 @@ const CreatePost = () => {
           required
           rows={5}
           onChange={(event) => setContent(event.target.value)}
-          className="w-full border border-white/10 bg-transparent p-2 rounded"
+          className="w-full border border-gray-500 bg-transparent p-2 rounded"
         />
       </div>
 
-      <div>
+      <div className="w-fit border-green-500">
         <label>Selecione o curso</label>
-        <select id="community" onChange={handleCommunityChange}>
-          <option value=""> -- Choose a Community --</option>
+        <select id="community" onChange={handleCommunityChange} required>
+          <option value=""> -- Escolha um curso -- </option>
           {communities?.map((community, key) => (
             <option key={key} value={community.id}>
               {community.name}
@@ -163,13 +161,13 @@ const CreatePost = () => {
 
       <button
         type="submit"
-        className="bg-purple-700 hover:bg-purple-500 text-white px-4 py-2 rounded cursor-pointer"
+        className="bg-emerald-700 hover:bg-emerald-500 text-white px-4 py-2 rounded cursor-pointer"
         disabled={isPending}
       >
         {isPending ? "Publicando..." : "Publicar"}
       </button>
 
-      {isError && <p className="text-red-500">Error creating post.</p>}
+      {isError && <p className="text-red-500">Erro ao publicar projeto.</p>}
     </form>
   );
 };

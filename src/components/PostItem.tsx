@@ -15,7 +15,7 @@ export const PostItem = ({ post }: Props) => {
       <div className="relative group md:hidden">
         <div className="absolute -inset-1 rounded-[20px] bg-gradient-to-r from-emerald-400 to-emerald-600 blur-sm opacity-0 group-hover:opacity-50 transition duration-300 pointer-events-none"></div>
         <Link to={`/post/${post.id}`} className="block relative z-10">
-          <div className="w-80 h-76 bg-white border border-emerald-100 rounded-[20px] text-gray-800 flex flex-col p-5 overflow-hidden transition-colors duration-300 group-hover:bg-emerald-50">
+          <div className="w-80 h-fit bg-white border border-emerald-100 rounded-[20px] text-gray-800 flex flex-col p-5 overflow-hidden transition-colors duration-300 group-hover:bg-emerald-50">
             {/* Header: Avatar and Title */}
             <div className="flex items-center space-x-2">
               {post.avatar_url ? (
@@ -41,6 +41,20 @@ export const PostItem = ({ post }: Props) => {
               <p className="line-clamp-3 overflow-hidden text-ellipsis text-justify text-gray-600">
                 {post.content}
               </p>
+            </div>
+            <div className="mt-4 flex justify-between items-center">
+              <div className="flex justify-start items-center">
+                <span className="cursor-pointer h-10 w-[50px] px-1 flex items-center justify-center font-extrabold rounded-lg text-emerald-600">
+                  <Heart /> <span className="ml-2">{post.like_count ?? 0}</span>
+                </span>
+                <span className="cursor-pointer h-10 w-[50px] px-1 flex items-center justify-center font-extrabold rounded-lg text-emerald-600">
+                  <MessageCircle />{" "}
+                  <span className="ml-2">{post.comment_count ?? 0}</span>
+                </span>
+              </div>
+              <span className="text-sm text-emerald-600">
+                Publicado em: {new Date(post.created_at).toLocaleDateString()}
+              </span>
             </div>
           </div>
         </Link>
@@ -93,7 +107,7 @@ export const PostItem = ({ post }: Props) => {
                   </span>
                 </div>
                 <span className="text-sm text-emerald-600">
-                  {new Date(post.created_at).toLocaleDateString()}
+                  Publicado em {new Date(post.created_at).toLocaleDateString()}
                 </span>
               </div>
             </div>

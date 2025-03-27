@@ -29,6 +29,7 @@ const createComment = async (
   userId?: string,
   author?: string
 ) => {
+  console.log("Comment section =>", newComment, postId, userId, author);
   if (!userId || !author) {
     throw new Error("You must be logged in to comment.");
   }
@@ -71,14 +72,13 @@ const CommentsSection = ({ postId }: Props) => {
     refetchInterval: 5000,
   });
 
+  const author = user?.user_metadata.user_name
+    ? user?.user_metadata.user_name
+    : user?.user_metadata.name;
+
   const { mutate, isPending, isError } = useMutation({
     mutationFn: (newComment: NewComment) =>
-      createComment(
-        newComment,
-        postId,
-        user?.id,
-        user?.user_metadata.user_name
-      ),
+      createComment(newComment, postId, user?.id, author),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["comments", postId] });
     },
@@ -118,7 +118,7 @@ const CommentsSection = ({ postId }: Props) => {
   };
 
   if (isLoading) {
-    return <div> Loading comments...</div>;
+    return <div> Carregando comentários...</div>;
   }
 
   if (error) {
@@ -136,18 +136,18 @@ const CommentsSection = ({ postId }: Props) => {
           <textarea
             value={newCommentText}
             onChange={(e) => setNewCommentText(e.target.value)}
-            className="w-full border border-white/10 bg-transparent p-2 rounded"
+            className="w-full border border-gray-500 bg-transparent p-2 rounded"
             placeholder="Escreva um comentário..."
             rows={3}
           />
           <button
             type="submit"
-            className="mt-2 bg-purple-500 text-white px-4 py-2 rounded cursor-pointer"
+            className="mt-2 bg-emerald-500 text-white px-4 py-2 rounded cursor-pointer"
           >
             {isPending ? "Publicando..." : "Publicar comentário"}
           </button>
           {isError && (
-            <p className="text-red-500 mt-2">Error posting comment.</p>
+            <p className="text-red-500 mt-2">Erro ao publicar comentário.</p>
           )}
         </form>
       ) : (

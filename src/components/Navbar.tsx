@@ -6,25 +6,23 @@ export const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { signInWithGoogle, signOut, user } = useAuth();
 
-  const displayName = user?.user_metadata.user_name || user?.email;
-
-  if (!user) return <h2>Carregando...</h2>;
+  const displayName =
+    user?.user_metadata.user_name || user?.user_metadata.name || user?.email;
 
   return (
-    <nav className="fixed top-0 w-full z-40 bg-[rgba(10,10,10,0.8)] backdrop-blur-lg border-b border-white/10 shadow-lg">
+    <nav className="fixed top-0 w-full z-40 bg-white/90 backdrop-blur-lg border-b border-emerald-100 shadow-lg">
       <div className="max-w-5xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <Link
             to="/"
             onClick={() => {
-              // Limpa o estado de busca se estiver na mesma rota
               if (window.location.pathname === "/") {
                 window.location.reload();
               }
             }}
-            className="font-mono text-xl font-bold text-white"
+            className="font-mono text-xl font-bold text-emerald-700"
           >
-            forum<span className="text-purple-500">.app</span>
+            IFMA TIMON<span className="text-emerald-500">.TESES</span>
           </Link>
 
           {/* Desktop Links */}
@@ -32,26 +30,31 @@ export const Navbar = () => {
             <Link
               to="/"
               onClick={() => {
-                // Limpa o estado de busca se estiver na mesma rota
                 if (window.location.pathname === "/") {
                   window.location.reload();
                 }
               }}
-              className="text-gray-300 hover:text-white transition-colors"
+              className="text-emerald-700 hover:text-emerald-500 transition-colors"
             >
               Início
             </Link>
             <Link
               to="/create"
-              className="text-gray-300 hover:text-white transition-colors"
+              className="text-emerald-700 hover:text-emerald-500 transition-colors"
             >
               Publicar TCC/Artigo
             </Link>
             <Link
               to="/communities"
-              className="text-gray-300 hover:text-white transition-colors"
+              className="text-emerald-700 hover:text-emerald-500 transition-colors"
             >
               Artigos por curso
+            </Link>
+            <Link
+              to="/myprojects"
+              className="text-emerald-700 hover:text-emerald-500 transition-colors"
+            >
+              Meus trabalhos
             </Link>
           </div>
 
@@ -63,21 +66,21 @@ export const Navbar = () => {
                   <img
                     src={user.user_metadata.picture}
                     alt="User Avatar"
-                    className="w-8 h-8 rounded-full object-cover"
+                    className="w-8 h-8 rounded-full object-cover border border-emerald-200"
                   />
                 )}
-                <span className="text-gray-300">{displayName}</span>
+                <span className="text-emerald-700">{displayName}</span>
                 <button
                   onClick={signOut}
-                  className="bg-red-700 px-3 py-1 rounded hover:bg-red-500"
+                  className="bg-emerald-600 text-white px-3 py-1 rounded hover:bg-emerald-500"
                 >
-                  Sign Out
+                  Sair
                 </button>
               </div>
             ) : (
               <button
                 onClick={signInWithGoogle}
-                className="bg-blue-700 hover:bg-blue-500 px-3 py-1 rounded"
+                className="bg-emerald-600 text-white hover:bg-emerald-500 px-3 py-1 rounded"
               >
                 Entrar com o Google
               </button>
@@ -88,7 +91,7 @@ export const Navbar = () => {
           <div className="md:hidden">
             <button
               onClick={() => setMenuOpen((prev) => !prev)}
-              className="text-gray-300 focus:outline-none"
+              className="text-emerald-700 focus:outline-none"
               aria-label="Toggle menu"
             >
               <svg
@@ -121,31 +124,25 @@ export const Navbar = () => {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="md:hidden bg-[rgba(10,10,10,0.9)]">
+        <div className="md:hidden bg-white/95 border-t border-emerald-100">
           <div className="px-2 pt-2 pb-3 space-y-1">
             <Link
               to="/"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700"
+              className="block px-3 py-2 rounded-md text-base font-medium text-emerald-700 hover:text-emerald-500 hover:bg-emerald-50"
             >
-              Home
+              Início
             </Link>
             <Link
               to="/create"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700"
+              className="block px-3 py-2 rounded-md text-base font-medium text-emerald-700 hover:text-emerald-500 hover:bg-emerald-50"
             >
-              Create Post
+              Publicar TCC/Artigo
             </Link>
             <Link
               to="/communities"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700"
+              className="block px-3 py-2 rounded-md text-base font-medium text-emerald-700 hover:text-emerald-500 hover:bg-emerald-50"
             >
-              Communities
-            </Link>
-            <Link
-              to="/community/create"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700"
-            >
-              Create Community
+              Artigos por curso
             </Link>
           </div>
         </div>

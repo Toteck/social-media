@@ -42,7 +42,6 @@ export const CommunityDisplay = ({ communityId }: Props) => {
       </div>
     );
 
-  console.log("CommunityDisplay => ", { data });
   if (data?.length === 0)
     return (
       <div className="text-center py-4">
@@ -52,8 +51,8 @@ export const CommunityDisplay = ({ communityId }: Props) => {
 
   return (
     <div>
-      <h2 className="text-6xl font-bold mb-6 text-center bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-        Publicações de Sistemas para Internet
+      <h2 className="text-6xl font-bold mb-8 text-center bg-gradient-to-r from-green-500 to-emerald-700  bg-clip-text text-transparent">
+        Publicações de {data[0]?.communities.name}
       </h2>
 
       {data && data.length > 0 ? (
@@ -64,7 +63,7 @@ export const CommunityDisplay = ({ communityId }: Props) => {
         </div>
       ) : (
         <p className="text-center text-gray-400">
-          No posts in this community yet.
+          Nenhuma publicação desse curso até agora. 😥
         </p>
       )}
     </div>

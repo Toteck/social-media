@@ -41,15 +41,13 @@ export const CommentItem = ({ comment, postId }: Props) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
+  const author = user?.user_metadata.user_name
+    ? user?.user_metadata.user_name
+    : user?.user_metadata.name;
+
   const { mutate, isPending, isError } = useMutation({
     mutationFn: (replyContent: string) =>
-      createReply(
-        replyContent,
-        postId,
-        comment.id,
-        user?.id,
-        user?.user_metadata.user_name
-      ),
+      createReply(replyContent, postId, comment.id, user?.id, author),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["comments", postId] });
       setReplyText("");
@@ -67,21 +65,21 @@ export const CommentItem = ({ comment, postId }: Props) => {
   };
 
   return (
-    <div className="pl-4 border-l border-white/10">
+    <div className="pl-4 border-l border-emerald-500">
       <div className="mb-2">
         <div className="flex items-center space-x-2">
           {/* Display the commenter's username */}
-          <span className="text-sm font-bold text-blue-400">
+          <span className="text-sm font-bold text-emerald-700">
             {comment.author}
           </span>
           <span className="text-xs text-gray-500">
             {new Date(comment.created_at).toLocaleString()}
           </span>
         </div>
-        <p className="text-gray-300">{comment.content}</p>
+        <p className="text-gray-700">{comment.content}</p>
         <button
           onClick={() => setShowReply((prev) => !prev)}
-          className="text-blue-500 text-sm mt-1"
+          className="text-emerald-500 text-sm mt-1"
         >
           {showReply ? "Cancelar" : "Responder"}
         </button>
@@ -92,7 +90,7 @@ export const CommentItem = ({ comment, postId }: Props) => {
             value={replyText}
             onChange={(e) => setReplyText(e.target.value)}
             className="w-full border border-white/10 bg-transparent p-2 rounded"
-            placeholder="Write a reply..."
+            placeholder="Escreva uma resposta..."
             rows={2}
           />
           <button
@@ -101,7 +99,9 @@ export const CommentItem = ({ comment, postId }: Props) => {
           >
             {isPending ? "Publicando..." : "Publicar resposta"}
           </button>
-          {isError && <p className="text-red-500">Error posting reply.</p>}
+          {isError && (
+            <p className="text-red-500">Error ao publicar resposta.</p>
+          )}
         </form>
       )}
 

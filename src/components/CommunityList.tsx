@@ -27,7 +27,7 @@ const CommunityList = () => {
   });
 
   if (isLoading) {
-    return <div className="text-center py-4">Loading communities...</div>;
+    return <div className="text-center py-4">Carregando cursos...</div>;
   }
 
   if (error) {
@@ -43,15 +43,15 @@ const CommunityList = () => {
       {data?.map((community) => (
         <div
           key={community.id}
-          className="border border-white/10 p-4 rounded hover:-translate-y-1 transition transform"
+          className="border border-emerald-500 p-4 rounded hover:-translate-y-1 transition transform"
         >
           <Link
             to={`/community/${community.id}`}
-            className="text-2xl font-bold text-purple-500 hover:underline"
+            className="text-2xl font-bold text-emerald-700 hover:underline"
           >
             {community.name}
           </Link>
-          <p className="text-gray-400 mt-2">{community.description}</p>
+          <p className="text-gray-700 mt-2">{community.description}</p>
         </div>
       ))}
     </div>
