@@ -123,6 +123,7 @@ export const Navbar = () => {
       </div>
 
       {/* Mobile Menu */}
+
       {menuOpen && (
         <div className="md:hidden bg-white/95 border-t border-emerald-100">
           <div className="px-2 pt-2 pb-3 space-y-1">
@@ -144,6 +145,43 @@ export const Navbar = () => {
             >
               Artigos por curso
             </Link>
+            <Link
+              to="/myprojects"
+              className="block px-3 py-2 rounded-md text-base font-medium text-emerald-700 hover:text-emerald-500 hover:bg-emerald-50"
+            >
+              Meus trabalhos
+            </Link>
+
+            {/* Mobile Auth Section */}
+            <div className="pt-2 border-t border-emerald-100">
+              {user ? (
+                <div className="flex items-center space-x-3 px-3 py-2">
+                  {user.user_metadata?.picture && (
+                    <img
+                      src={user.user_metadata.picture}
+                      alt="User Avatar"
+                      className="w-8 h-8 rounded-full object-cover border border-emerald-200"
+                    />
+                  )}
+                  <span className="text-emerald-700 flex-grow">
+                    {displayName}
+                  </span>
+                  <button
+                    onClick={signOut}
+                    className="bg-emerald-600 text-white px-3 py-1 rounded hover:bg-emerald-500"
+                  >
+                    Sair
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={signInWithGoogle}
+                  className="w-full bg-emerald-600 text-white hover:bg-emerald-500 px-3 py-2 rounded text-left"
+                >
+                  Entrar com o Google
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}
