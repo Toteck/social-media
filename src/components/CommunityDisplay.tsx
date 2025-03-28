@@ -52,7 +52,8 @@ export const CommunityDisplay = ({ communityId }: Props) => {
   return (
     <div>
       <h2 className="text-6xl font-bold mb-8 text-center bg-gradient-to-r from-green-500 to-emerald-700  bg-clip-text text-transparent">
-        Publicações de {data[0]?.communities.name}
+        Publicações de{" "}
+        {data?.[0]?.communities.name ?? "Comunidade desconhecida"}
       </h2>
 
       {data && data.length > 0 ? (
