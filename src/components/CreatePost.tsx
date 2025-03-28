@@ -12,6 +12,7 @@ interface PostInput {
   community_id?: number | null;
   user_id: string;
   author: string;
+  advisor: string;
 }
 
 const sanitizeFileName = (fileName: string) => {
@@ -58,6 +59,7 @@ const CreatePost = () => {
   const [content, setContent] = useState<string>("");
   const [selectedProject, setSelectedProject] = useState<File | null>(null);
   const [communityId, setCommunityId] = useState<number | null>(null);
+  const [advisor, setAdvisor] = useState<string>("");
 
   const navigate = useNavigate();
 
@@ -89,6 +91,7 @@ const CreatePost = () => {
         community_id: communityId,
         user_id: user?.id || "",
         author: user?.user_metadata.full_name,
+        advisor,
       },
 
       projectFile: selectedProject,
@@ -134,7 +137,7 @@ const CreatePost = () => {
       </div>
 
       <div className="w-fit border-green-500">
-        <label>Selecione o curso</label>
+        <label className="mb-2 font-medium">Selecione o curso</label>
         <select id="community" onChange={handleCommunityChange} required>
           <option value=""> -- Escolha um curso -- </option>
           {communities?.map((community, key) => (
@@ -143,6 +146,19 @@ const CreatePost = () => {
             </option>
           ))}
         </select>
+      </div>
+
+      <div>
+        <label htmlFor="advisor" className="block mb-2 font-medium">
+          Orientador
+        </label>
+        <input
+          type="text"
+          id="advisor"
+          required
+          onChange={(event) => setAdvisor(event.target.value)}
+          className="w-full border border-gray-500 bg-transparent p-2 rounded"
+        />
       </div>
 
       <div>

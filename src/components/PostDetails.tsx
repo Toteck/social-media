@@ -67,15 +67,17 @@ export const PostDetails = ({ postId }: Props) => {
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
-      <h2 className="text-xl sm:text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-3 sm:mb-4 md:mb-6 text-justify bg-gradient-to-r from-green-500 to-emerald-500 bg-clip-text text-transparent">
+      <h2 className="text-xl sm:text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-3 sm:mb-4 md:mb-6 text-center bg-gradient-to-r from-green-500 to-emerald-500 bg-clip-text text-transparent">
         {data?.title}
       </h2>
 
       <p className="text-gray-700 text-lg text-justify">{data?.content}</p>
 
-      <p className="text-gray-500 text-sm">
-        Publicado em: {new Date(data!.created_at).toLocaleString()} por{" "}
-        {data?.author}
+      <p className="text-gray-700 text-[16px]">
+        Publicado em: {new Date(data!.created_at).toLocaleString()}
+      </p>
+      <p className="text-gray-700 text-[16px]">
+        Autor: {data?.author} {" | "} Orientador: {data?.advisor}
       </p>
 
       {data?.project_url && (

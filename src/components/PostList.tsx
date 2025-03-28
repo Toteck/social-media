@@ -12,6 +12,7 @@ export interface Post {
   comment_count?: number;
   project_url: string;
   author: string;
+  advisor: string;
 }
 
 const fetchPosts = async (searchTerm?: string): Promise<Post[]> => {
